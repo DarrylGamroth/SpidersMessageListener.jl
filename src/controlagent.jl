@@ -1,9 +1,9 @@
-mutable struct ControlAgent
+struct ControlAgent
     client::Aeron.Client
     name::String
     sbe_position_ptr::Base.RefValue{Int64}
     input_streams::Vector{Tuple{Aeron.Subscription,Aeron.FragmentAssembler}}
-    ControlAgent(client, name) = new(client, name)
+    ControlAgent(client, name) = new(client, name, Ref(0), Vector{Tuple{Aeron.Subscription,Aeron.FragmentAssembler}}(undef, 0))
 end
 
 Agent.name(agent::ControlAgent) = agent.name
@@ -25,9 +25,6 @@ function Agent.on_start(agent::ControlAgent)
     println("Starting agent $(Agent.name(agent))")
 
     try
-        agent.sbe_position_ptr = Ref(0)
-        agent.input_streams = Vector{Tuple{Aeron.Subscription,Aeron.FragmentAssembler}}(undef, 0)
-
         # Get configuration from environment variables
         status_uri = get(ENV, "STATUS_URI") do
             error("Environment variable STATUS_URI not found")

@@ -6,7 +6,6 @@ using EnumX
 using SpidersFragmentFilters
 using SpidersMessageCodecs
 
-include("uvclockgetttime.jl")
 include("controlagent.jl")
 
 ENV["STATUS_URI"] = "aeron:udp?endpoint=localhost:40123"
