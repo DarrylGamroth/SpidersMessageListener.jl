@@ -1,7 +1,7 @@
 name = "SpidersMessageListener"
 uuid = "5c33e8ba-5a72-4bed-9ba2-483ce86de6f4"
 authors = ["Darryl Gamroth <dgamroth@rubus.ca>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Aeron = "b850ffb1-6704-484e-996b-4710e2f097f0"
