@@ -2,35 +2,40 @@ module SpidersMessageListener
 
 using Aeron
 using Agent
+using Clocks
 using EnumX
 using SpidersFragmentFilters
 using SpidersMessageCodecs
 
 include("controlagent.jl")
 
-function main(ARGS)
+export main
+
+function (@main)(ARGS)
     # Initialize Aeron
-    client = Aeron.Client()
+    Aeron.Context() do context
+        Aeron.Client(context) do client
 
-    # Initialize the agent
-    agent = ControlAgent(client, "SpidersMessageListener")
+            # Initialize the agent
+            agent = ControlAgent(client, "SpidersMessageListener")
 
-    # Start the agent
-    runner = AgentRunner(BackoffIdleStrategy(), agent)
+            # Start the agent
+            runner = AgentRunner(BackoffIdleStrategy(), agent)
 
-    try
-        Agent.start_on_thread(runner)
+            Agent.start_on_thread(runner)
 
-        wait(runner)
-    catch e
-        if e isa TaskFailedException || e isa InterruptException
-            @info "Shutting down..."
-        else
-            @error "Exception caught:" exception = (e, catch_backtrace())
+            try
+                wait(runner)
+            catch e
+                if e isa TaskFailedException || e isa InterruptException
+                    @info "Shutting down..."
+                else
+                    @error "Exception caught:" exception = (e, catch_backtrace())
+                end
+            finally
+                close(runner)
+            end
         end
-    finally
-        close(runner)
-        close(client)
     end
 
     return 0
