@@ -14,7 +14,7 @@ function Agent.on_start(agent::ControlAgent)
 
     i = 1
     while haskey(ENV, "STREAM_URI_$i")
-        uri = ENV["STREAM_URI_$i"]
+        uri = ENV["STREAM_URI_$i"] * "|tether=false"
         stream_id = parse(Int, get(ENV, "STREAM_ID_$i") do
             error("Environment variable STREAM_ID_$i not found")
         end)
